@@ -1,0 +1,125 @@
+spring:
+  application:
+    name: U2E
+  profiles:
+    group:
+      local: db-local, port-local, common
+      prod: db-prod, port-prod, common
+    active: local
+
+---
+
+#??? DB
+spring:
+  config:
+    activate:
+      on-profile: db-local
+
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/U2E
+#    username: ${LOCAL_DB_USER}
+#    password: ${LOCAL_DB_PASSWORD}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        dialect: org.hibernate.dialect.MySQLDialect
+
+    datasource:
+      url: jdbc:h2:mem:BookJourneyBackendApplication;MODE=MYSQL;
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+
+    h2:
+      console:
+        enabled: true
+
+    jpa:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      properties:
+        hibernate:
+          format_sql: true
+
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
+
+  docker:
+    compose:
+      enabled: false  # local ???? Docker Compose ????
+
+---
+#??? DB
+spring:
+  config:
+    activate:
+      on-profile: db-prod
+    datasource:
+      url: jdbc:mysql://:3306/U2E
+      username: ${PROD_DB_USER}
+      password: ${PROD_DB_PASSWORD}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  data:
+    redis:
+      host: my-cache-server
+      port: 6379
+
+  docker:
+    compose:
+      enabled: true  # prod ???? Docker Compose ???
+
+---
+#??? ??
+spring:
+  config:
+    activate:
+      on-profile: port-prod
+
+server:
+  port: 9000
+  servlet:
+    context-path: /
+
+---
+#??? ??
+spring:
+  config:
+    activate:
+      on-profile: port-local
+
+server:
+  port: 8000
+  servlet:
+    context-path: /
+
+---
+#??
+spring:
+  config:
+    activate:
+      on-profile: common
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui/index.html
